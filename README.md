@@ -1,12 +1,12 @@
-# Omnipay: WechatPay
+# Omnipay: WxPay
 
-**WechatPay driver for the Omnipay PHP payment processing library**
+**WxPay driver for the Omnipay PHP payment processing library**
 
-[![Build Status](https://travis-ci.org/lokielse/omnipay-wechatpay.png?branch=master)](https://travis-ci.org/lokielse/omnipay-wechatpay)
-[![Latest Stable Version](https://poser.pugx.org/lokielse/omnipay-wechatpay/version.png)](https://packagist.org/packages/lokielse/omnipay-wechatpay)
-[![Total Downloads](https://poser.pugx.org/lokielse/omnipay-wechatpay/d/total.png)](https://packagist.org/packages/lokielse/omnipay-wechatpay)
+[![Build Status](https://travis-ci.org/lokielse/omnipay-WxPay.png?branch=master)](https://travis-ci.org/zfuming/omnipay-wxpay)
+[![Latest Stable Version](https://poser.pugx.org/lokielse/omnipay-WxPay/version.png)](https://packagist.org/packages/zfuming/omnipay-wxpay)
+[![Total Downloads](https://poser.pugx.org/lokielse/omnipay-WxPay/d/total.png)](https://packagist.org/packages/zfuming/omnipay-wxpay)
 
-> The WechatPay gateway can be accessed from outside of China
+> The WxPay gateway can be accessed from outside of China
 
 [Omnipay](https://github.com/omnipay/omnipay) is a framework agnostic, multi-gateway payment
 processing library for PHP 5.3+. This package implements UnionPay support for Omnipay.
@@ -16,7 +16,7 @@ processing library for PHP 5.3+. This package implements UnionPay support for Om
 Omnipay is installed via [Composer](http://getcomposer.org/). To install, simply add it
 to your `composer.json` file:
 
-    "lokielse/omnipay-wechatpay": "^1.0",
+    "zfuming/omnipay-wxpay": "^1.0",
 
 And run composer to update your dependencies:
 
@@ -27,21 +27,22 @@ And run composer to update your dependencies:
 The following gateways are provided by this package:
 
 
-* WechatPay (Wechat Common Gateway) 微信支付通用网关
-* WechatPay_App (Wechat App Gateway) 微信APP支付网关
-* WechatPay_Native (Wechat Native Gateway) 微信原生扫码支付支付网关
-* WechatPay_Js (Wechat Js API/MP Gateway) 微信网页、公众号、小程序支付网关
-* WechatPay_Pos (Wechat Micro/POS Gateway) 微信刷卡支付网关
+* WxPay (Wechat Common Gateway) 微信支付通用网关
+* WxPay_App (Wechat App Gateway) 微信APP支付网关
+* WxPay_Native (Wechat Native Gateway) 微信原生扫码支付支付网关
+* WxPay_Js (Wechat Js API/MP Gateway) 微信网页、公众号、小程序支付网关
+* WxPay_Pos (Wechat Micro/POS Gateway) 微信刷卡支付网关
 
 ## Usage
 
 ### Create Order [doc](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1)
 
 ```php
-//gateways: WechatPay_App, WechatPay_Native, WechatPay_Js, WechatPay_Pos
-$gateway    = Omnipay::create('WechatPay_App');
+//gateways: WxPay_App, WxPay_Native, WxPay_Js, WxPay_Pos
+$gateway    = Omnipay::create('WxPay_App');
 $gateway->setAppId($config['app_id']);
 $gateway->setMchId($config['mch_id']);
+$gateway->setSubMchId($config['sub_mch_id']);
 $gateway->setApiKey($config['api_key']);
 
 $order = [
@@ -53,8 +54,8 @@ $order = [
 ];
 
 /**
- * @var Omnipay\WechatPay\Message\CreateOrderRequest $request
- * @var Omnipay\WechatPay\Message\CreateOrderResponse $response
+ * @var Omnipay\WxPay\Message\CreateOrderRequest $request
+ * @var Omnipay\WxPay\Message\CreateOrderResponse $response
  */
 $request  = $gateway->purchase($order);
 $response = $request->send();
@@ -62,16 +63,17 @@ $response = $request->send();
 //available methods
 $response->isSuccessful();
 $response->getData(); //For debug
-$response->getAppOrderData(); //For WechatPay_App
-$response->getJsOrderData(); //For WechatPay_Js
+$response->getAppOrderData(); //For WxPay_App
+$response->getJsOrderData(); //For WxPay_Js
 $response->getCodeUrl(); //For Native Trade Type
 ```
 
 ### Notify [doc](https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_7&index=3)
 ```php
-$gateway    = Omnipay::create('WechatPay');
+$gateway    = Omnipay::create('WxPay');
 $gateway->setAppId($config['app_id']);
 $gateway->setMchId($config['mch_id']);
+$gateway->setSubMchId($config['sub_mch_id']);
 $gateway->setApiKey($config['api_key']);
 
 $response = $gateway->completePurchase([
@@ -133,7 +135,7 @@ var_dump($response->isSuccessful());
 var_dump($response->getData());
 ```
 
-### Shorten URL (for `WechatPay_Native`) [doc](https://pay.weixin.qq.com/wiki/doc/api/micropay.php?chapter=9_9&index=8)
+### Shorten URL (for `WxPay_Native`) [doc](https://pay.weixin.qq.com/wiki/doc/api/micropay.php?chapter=9_9&index=8)
 ```php
 $response = $gateway->shortenUrl([
     'long_url' => $longUrl
@@ -144,7 +146,7 @@ var_dump($response->getData());
 var_dump($response->getShortUrl());
 ```
 
-### Query OpenId (for `WechatPay_Pos`) [doc](https://pay.weixin.qq.com/wiki/doc/api/micropay.php?chapter=9_13&index=9)
+### Query OpenId (for `WxPay_Pos`) [doc](https://pay.weixin.qq.com/wiki/doc/api/micropay.php?chapter=9_13&index=9)
 ```php
 $response = $gateway->shortenUrl([
     'auth_code' => $authCode
@@ -157,22 +159,3 @@ var_dump($response->getOpenId());
 
 For general usage instructions, please see the main [Omnipay](https://github.com/omnipay/omnipay)
 repository.
-
-## Related
-
-- [Laravel-Omnipay](https://github.com/ignited/laravel-omnipay)
-- [Omnipay-Alipay](https://github.com/lokielse/omnipay-alipay)
-- [Omnipay-UnionPay](https://github.com/lokielse/omnipay-unionpay)
-
-## Support
-
-If you are having general issues with Omnipay, we suggest posting on
-[Stack Overflow](http://stackoverflow.com/). Be sure to add the
-[omnipay tag](http://stackoverflow.com/questions/tagged/omnipay) so it can be easily found.
-
-If you want to keep up to date with release anouncements, discuss ideas for the project,
-or ask more detailed questions, there is also a [mailing list](https://groups.google.com/forum/#!forum/omnipay) which
-you can subscribe to.
-
-If you believe you have found a bug, please report it using the [GitHub issue tracker](https://github.com/lokielse/omnipay-wechatpay/issues),
-or better yet, fork the library and submit a pull request.
